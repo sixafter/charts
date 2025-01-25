@@ -1,0 +1,68 @@
+{{- if .Values.acme.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.acme.name }}
+  namespace: {{ .Values.certManagerNamespace | default "cert-manager" }}
+  annotations:
+    {{- range $key, $value := .Values.global.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $value := .Values.global.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}  
+spec:
+  acme:
+    email: {{ .Values.acme.email }}
+    server: {{ .Values.acme.server }}
+    privateKeySecretRef:
+      name: {{ .Values.acme.privateKeySecretRef }}
+    solvers:
+    {{- range .Values.acme.solvers }}
+    - selector:
+        {{- if .dnsZones }}
+        dnsZones:
+        {{ toYaml .dnsZones | nindent 8 }}
+        {{- end }}
+      dns01:
+        {{- if .route53 }}
+        route53:
+          region: {{ .route53.region }}
+          hostedZoneID: {{ .route53.hostedZoneID }}
+        {{- end }}
+        {{- if .cloudflare }}
+        cloudflare:
+          apiTokenSecretRef:
+            name: {{ .cloudflare.apiTokenSecretRef.name }}
+            key: {{ .cloudflare.apiTokenSecretRef.key }}
+        {{- end }}
+        {{- if .azure }}
+        azureDNS:
+          clientID: {{ .azure.clientID }}
+          clientSecretSecretRef:
+            name: {{ .azure.clientSecretSecretRef.name }}
+            key: {{ .azure.clientSecretSecretRef.key }}
+          tenantID: {{ .azure.tenantID }}
+          subscriptionID: {{ .azure.subscriptionID }}
+          hostedZoneName: {{ .azure.hostedZoneName }}
+        {{- end }}
+        {{- if .gcp }}
+        googleDNS:
+          project: {{ .gcp.project }}
+          serviceAccountSecretRef:
+            name: {{ .gcp.serviceAccountSecretRef.name }}
+            key: {{ .gcp.serviceAccountSecretRef.key }}
+        {{- end }}
+    {{- end }}
+{{- end }}
+
+{{- if .Values.selfSigned.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.selfSigned.name }}
+spec:
+  selfSigned: {}
+{{- end }}

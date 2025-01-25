@@ -1,0 +1,112 @@
+# Global configuration for the ClusterIssuer Helm chart
+
+# Namespace where cert-manager is installed
+# This should match the namespace in which cert-manager is deployed.
+certManagerNamespace: "cert-manager"
+
+# ACME Issuer Configuration
+acme:
+  # Enable or disable the creation of an ACME ClusterIssuer.
+  # Set to true to create the ACME ClusterIssuer, or false to exclude it.
+  enabled: true
+  
+  # The name of the ACME ClusterIssuer resource to create.
+  name: letsencrypt-clusterissuer
+
+  # The email address to use for the ACME account registration.
+  # Required by Let's Encrypt for notifications about certificate expiration or updates.
+  email: "user@example.com"
+
+  # The ACME server URL.
+  # Use the production endpoint for real certificates:
+  #   https://acme-v02.api.letsencrypt.org/directory
+  # Use the staging endpoint for testing (does not issue trusted certificates):
+  #   https://acme-staging-v02.api.letsencrypt.org/directory
+  server: "https://acme-v02.api.letsencrypt.org/directory"
+
+  # The name of the Kubernetes Secret where the ACME private key will be stored.
+  privateKeySecretRef: "letsencrypt-private-key"
+
+  # Private Key Management for the ACME Account
+  privateKey:
+    # Set to true to allow the Helm chart to create a Kubernetes Secret for the ACME private key.
+    # If set to false, the Secret will either be automatically created and managed by cert-manager,
+    # or an existing Secret must be provided in advance.
+    create: false
+
+    # Base64-encoded private key for the ACME account.
+    # This is required only if `create` is set to true.
+    # To generate a private key manually:
+    #   openssl genpkey -algorithm RSA -out private.key -pkeyopt rsa_keygen_bits:2048
+    # Then encode the private key to Base64:
+    #   base64 private.key
+    # Finally, paste the result here.
+    data: ""
+
+  # DNS solvers to configure ACME challenges.
+  solvers:
+    # Example configuration for AWS Route 53 DNS solver.
+    - dnsZones:
+        # List of DNS zones that this solver will handle.
+        - "example.com"
+      dns01:
+        route53:
+          # AWS region where the Route 53 hosted zone is located.
+          region: "us-east-1"
+          # (Optional) Hosted Zone ID for the domain.
+          hostedZoneID: "Z1234567890ABC"
+
+    # Example configuration for Cloudflare DNS solver.
+    - dnsZones:
+        # List of DNS zones that this solver will handle.
+        - "anotherexample.com"
+      dns01:
+        cloudflare:
+          # Reference to the Kubernetes Secret containing the Cloudflare API token.
+          apiTokenSecretRef:
+            name: cloudflare-api-token  # Name of the Secret.
+            key: api-token              # Key in the Secret that stores the token.
+
+    # Example configuration for Azure DNS solver.
+    - dnsZones:
+        # List of DNS zones that this solver will handle.
+        - "azureexample.com"
+      dns01:
+        azureDNS:
+          # Azure service principal configuration.
+          clientID: "azure-client-id"
+          clientSecretSecretRef:
+            name: azure-client-secret  # Name of the Secret containing the client secret.
+            key: client-secret         # Key in the Secret for the client secret.
+          tenantID: "azure-tenant-id"
+          subscriptionID: "azure-subscription-id"
+          # Name of the Azure hosted zone.
+          hostedZoneName: "azureexample.com"
+
+    # Example configuration for Google Cloud DNS solver.
+    - dnsZones:
+        # List of DNS zones that this solver will handle.
+        - "gcpexample.com"
+      dns01:
+        googleDNS:
+          # GCP project ID where the Cloud DNS hosted zone is located.
+          project: "gcp-project-id"
+          # Reference to the Kubernetes Secret containing the GCP service account key.
+          serviceAccountSecretRef:
+            name: gcp-service-account      # Name of the Secret.
+            key: gcp-service-account.json  # Key in the Secret that stores the service account JSON.
+
+# Self-Signed Issuer Configuration
+selfSigned:
+  # Enable or disable the creation of a self-signed ClusterIssuer.
+  # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
+  enabled: true
+
+  # The name of the self-signed ClusterIssuer resource to create.
+  name: self-signed-issuer
+
+# Additional global values for advanced use cases can be added below.
+# For example, annotations, labels, or custom configurations.
+global:
+  annotations: {}
+  labels: {}
