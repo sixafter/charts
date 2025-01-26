@@ -1,0 +1,34 @@
+apiVersion: v2
+
+# Description of the chart, outlining its purpose and functionality.
+description: >
+  A Helm chart for managing certificate issuers using cert-manager in Kubernetes.
+  This chart supports automated issuance and renewal of TLS certificates
+  via ACME (Let's Encrypt) and provides options for self-signed and custom
+  issuer configurations. Ideal for securing Kubernetes services across
+  diverse environments including AWS, GCP, Azure, and on-premises clusters.
+
+# Minimum Kubernetes version required to deploy this chart.
+# The caret (^) allows compatibility with all patch versions of the specified minor version (1.10.x).
+kubeVersion: ^1.10.0-0
+
+# The name of the Helm chart.
+# This should be a unique identifier for your chart.
+name: cert-issuer
+
+# The version of the chart itself.
+# Follows Semantic Versioning (SemVer 2) guidelines: major.minor.patch
+# Increment:
+# - Major version for breaking changes.
+# - Minor version for new features, backward-compatible.
+# - Patch version for bug fixes.
+version: 1.0.0
+
+# The application version that this chart deploys.
+# This is independent of the chart version and represents the version of the application managed by the chart.
+appVersion: 1.16.0
+
+# List of maintainers for the chart, providing their name and optional URL.
+maintainers:
+  - name: mprimeaux
+    url: https://github.com/mrimeaux

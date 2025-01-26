@@ -1,0 +1,38 @@
+# ACME Issuer Configuration
+acme:
+  # Enable or disable the creation of an ACME ClusterIssuer.
+  # Set to true to create the ACME ClusterIssuer, or false to exclude it.
+  enabled: true
+
+  # The email address to use for the ACME account registration.
+  # Required by Let's Encrypt for notifications about certificate expiration or updates.
+  email: "user@example.com"
+
+  # The ACME server URL.
+  # Use the production endpoint for real certificates:
+  #   https://acme-v02.api.letsencrypt.org/directory
+  # Use the staging endpoint for testing (does not issue trusted certificates):
+  #   https://acme-staging-v02.api.letsencrypt.org/directory
+  server: "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+  # The name of the Kubernetes Secret where the ACME private key will be stored.
+  privateKeySecretRef: "acme-private-key"
+
+  # Solvers for ACME challenges supporting dns01 and http01 with multiple configurations.
+  solvers:
+    # Define solvers for ACME challenges. Multiple solvers can be defined to handle different DNS zones or methods.
+    - selector:
+        dnsZones:
+          # List of DNS zones that this solver will handle.
+          - "example.com"
+      dns01:
+        - route53:
+            region: "us-east-1"
+            hostedZoneID: "Z1234567890ABC"
+
+# Self-Signed Issuer Configuration
+selfSigned:
+  # Enable or disable the creation of a self-signed ClusterIssuer.
+  # Self-signed issuers are typically used for testing or internal purposes where external validation is not required.
+  # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
+  enabled: true

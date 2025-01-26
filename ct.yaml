@@ -1,0 +1,11 @@
+# Ref: https://github.com/helm/chart-testing#configuration
+remote: origin
+chart-dirs:
+  - charts
+chart-repos:
+  - jetstack=https://charts.jetstack.io
+helm-extra-args: --timeout 600s
+check-version-increment: true
+validate-maintainers: true
+validate-yaml: true
+target-branch: main

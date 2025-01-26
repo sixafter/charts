@@ -1,0 +1,98 @@
+# Ref: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+name: publish
+
+on:
+  workflow_dispatch:
+    
+  push:
+    branches:
+      - 'main'
+  
+    paths:
+      - charts/** 
+      - .github/workflows/publish.yaml
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read  # Required to read repo contents
+      packages: write # Required to push to GHCR
+
+    steps:
+      - name: Display GitHub Context
+        id: github_context_step
+        run: echo '${{ toJSON(github) }}'
+      - name: Display Job Context
+        run: echo '${{ toJSON(job) }}'
+      - name: Display Steps Context
+        run: echo '${{ toJSON(steps) }}'
+      - name: Display Runner Context
+        run: echo '${{ toJSON(runner) }}'
+      - name: Display Strategy Context
+        run: echo '${{ toJSON(strategy) }}'
+      - name: Display Matrix Context
+        run: echo '${{ toJSON(matrix) }}'
+
+      - name: Preamble
+        run: |
+          whoami
+          echo github ref $GITHUB_REF
+          echo workflow $GITHUB_WORKFLOW
+          echo home $HOME
+          echo event name $GITHUB_EVENT_NAME
+          echo workspace $GITHUB_WORKSPACE
+
+          df -h
+
+      # Ref: https://github.com/actions/checkout
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"          
+
+      # Ref: https://github.com/Azure/setup-helm
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.2
+
+      # Authenticate to GHCR
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+
+      # Ref: https://github.com/helm/chart-testing-action
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.7.0
+
+      - name: Run chart-testing (lint)
+        run: ct lint --config ct.yaml
+
+      # Detect changed charts.
+      - name: Detect Changed Charts
+        id: changed-charts
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 | grep 'charts/.*/Chart.yaml' | cut -d'/' -f2)
+          echo "CHARTS=${CHANGED}" >> $GITHUB_ENV
+
+      # Publish Changed Charts.
+      - name: Publish Charts
+        if: env.CHARTS != ''
+        run: |
+          for chart in $CHARTS; do
+            echo "Processing chart: $chart"
+
+            # Package the chart
+            helm package charts/$chart
+
+            # Push the chart to GHCR
+            VERSION=$(yq e '.version' charts/$chart/Chart.yaml)
+            helm chart save charts/$chart ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
+            helm chart push ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
+          done
