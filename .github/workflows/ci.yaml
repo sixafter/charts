@@ -76,7 +76,7 @@ jobs:
       - name: Install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set crds.enabled=true
 
       # Ref: https://github.com/helm/chart-testing/blob/main/doc/ct_install.md
       - name: Run chart-testing (install)
