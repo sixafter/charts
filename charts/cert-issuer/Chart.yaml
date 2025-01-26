@@ -9,8 +9,8 @@ description: >
   diverse environments including AWS, GCP, Azure, and on-premises clusters.
 
 # Minimum Kubernetes version required to deploy this chart.
-# The caret (^) allows compatibility with all patch versions of the specified minor version (1.10.x).
-kubeVersion: ^1.10.0-0
+# The caret (^) allows compatibility with all patch versions of the specified minor version (1.30.x).
+kubeVersion: ^1.30.0-0
 
 # The name of the Helm chart.
 # This should be a unique identifier for your chart.
@@ -22,7 +22,7 @@ name: cert-issuer
 # - Major version for breaking changes.
 # - Minor version for new features, backward-compatible.
 # - Patch version for bug fixes.
-version: 1.0.0
+version: 1.1.0
 
 # The application version that this chart deploys.
 # This is independent of the chart version and represents the version of the application managed by the chart.
