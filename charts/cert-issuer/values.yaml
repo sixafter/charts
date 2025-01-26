@@ -20,9 +20,21 @@ acme:
   # Set to true to create the ACME ClusterIssuer, or false to exclude it.
   enabled: true
 
+  # Enables or disables generating a new ACME account key. If true, the Issuer resource will not
+  # request a new account but will expect the account key to be supplied via an existing secret.
+  # If false, the cert-manager system will generate a new ACME account key for the Issuer.
+  # Defaults to false.
+  disableAccountKeyGeneration: false
+
   # The email address to use for the ACME account registration.
   # Required by Let's Encrypt for notifications about certificate expiration or updates.
   email: "user@example.com"
+
+  # Enables requesting a Not After date on certificates that matches the duration of the
+  # certificate. This is not supported by all ACME servers like Let's Encrypt. If set to
+  # true when the ACME server does not support it it will create an error on the Order.
+  # Defaults to false.
+  enableDurationFeature: false
 
   # The ACME server URL.
   # Use the production endpoint for real certificates:
@@ -33,6 +45,12 @@ acme:
 
   # The name of the Kubernetes Secret where the ACME private key will be stored.
   privateKeySecretRef: "acme-private-key"
+
+  # Enables or disables validation of the ACME server TLS certificate. If true, requests to the ACME server
+  # will not have their TLS certificate validated (i.e. insecure connections will be allowed). Only enable
+  # this option in development environments. The cert-manager system installed roots will be used to verify
+  # connections to the ACME server if this is false. Defaults to false.
+  skipTLSVerify: false
 
   # Private Key Management for the ACME Account
   privateKey:
@@ -94,6 +112,34 @@ vault:
 # Self-Signed Issuer Configuration
 selfSigned:
   # Enable or disable the creation of a self-signed ClusterIssuer.
-  # Self-signed issuers are typically used for testing or internal purposes where external validation is not required.
-  # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
+  # Self-signed issuers are typically used for testing or internal purposes where external
+  # validation is not required. Set to true to create the self-signed ClusterIssuer,
+  # or false to exclude it.
   enabled: false
+
+# CA configures this issuer to sign certificates using a signing CA keypair stored in a Secret resource.
+# This is used to build internal PKIs that are managed by cert-manager.
+ca:
+  # Enable or disable the creation of a CA-based ClusterIssuer.
+  # Set to true to create the CA ClusterIssuer, or false to exclude it.
+  enabled: false
+
+  # SecretName is the name of the Kubernetes Secret containing the signing CA keypair.
+  # This secret is used to sign certificates issued by this ClusterIssuer.
+  secretName: "ca-signing-keypair"
+
+  # (Optional) IssuingCertificateURLs is a list of URLs which this issuer should embed into certificates
+  # it creates. See https://www.rfc-editor.org/rfc/rfc5280#section-4.2.2.1 for more details.
+  # As an example, such a URL might be "http://ca.domain.com/ca.crt".
+  issuingCertificateURLs: []
+
+  # (Optional) The CRL distribution points is an X.509 v3 certificate extension which identifies
+  # the location of the CRL from which the revocation of this certificate can be checked. If not
+  # set, certificates will be issued without distribution points set.
+  crlDistributionPoints: []
+
+  # (Optional) The OCSP server list is an X.509 v3 extension that defines a list of URLs of
+  # OCSP responders. The OCSP responders can be queried for the revocation status of an issued
+  # certificate. If not set, the certificate will be issued with no OCSP servers set. For
+  # example, an OCSP server URL could be "http://ocsp.int-x3.letsencrypt.org".
+  ocspServers: []

@@ -6,10 +6,12 @@ The `cert-issuer` Helm chart is designed to simplify the management of certifica
 
 ## Features
 
-- **Automated Certificate Issuance**: Leverages cert-manager to handle certificate management.
-- **Multi-Cloud Support**: Supports DNS challenges for AWS Route 53, Google Cloud DNS, Azure DNS, Vault, and Cloudflare and HTTP challenges.
-- **Self-Signed Certificates**: Allows optional configuration for self-signed issuers.
-- **Secure and Flexible**: Parameterized configurations for secrets, namespaces, and annotations.
+- **Automated Certificate Issuance**: Utilizes cert-manager to streamline certificate issuance and renewal.
+- **Multi-Cloud and Multi-Challenge Support**: Supports DNS challenges for AWS Route 53, Google Cloud DNS, Azure DNS, Cloudflare, and HTTP challenges across diverse environments.
+- **Self-Signed Certificates**: Provides optional configuration for generating self-signed certificates.
+- **Secure and Flexible Configuration**: Offers customizable options for secrets, namespaces, annotations, and more.
+- **OCI-Compliant Distribution**: Charts are packaged and stored in the GitHub Container Registry for efficient deployment.
+- **CA Support**: Enables the signing of certificates using a CA keypair stored in a Kubernetes Secret, supporting internal PKIs managed by cert-manager.
 
 ---
 
@@ -20,6 +22,10 @@ The `cert-issuer` Helm chart is designed to simplify the management of certifica
 - Kubernetes 1.10+.
 - [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager) installed in the cluster.
 - Helm 3.8+ (supports OCI-compliant charts).
+
+### Compatibility
+
+This chart is compatible with cert-manager versions 1.5.x and later. It is tested with cert-manager up to version 1.16.x. Compatibility with earlier versions is not guaranteed.
 
 ### Pull and Install the Chart
 

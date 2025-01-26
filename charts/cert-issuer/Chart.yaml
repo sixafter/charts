@@ -22,11 +22,11 @@ name: cert-issuer
 # - Major version for breaking changes.
 # - Minor version for new features, backward-compatible.
 # - Patch version for bug fixes.
-version: 0.2.0
+version: 1.0.0
 
 # The application version that this chart deploys.
 # This is independent of the chart version and represents the version of the application managed by the chart.
-appVersion: 1.0.0
+appVersion: 1.16.0
 
 # List of maintainers for the chart, providing their name and optional URL.
 maintainers:

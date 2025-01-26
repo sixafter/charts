@@ -17,6 +17,21 @@ spec:
     server: {{ .Values.acme.server | quote }}
     privateKeySecretRef:
       name: {{ .Values.acme.privateKeySecretRef | quote }}
+    {{- if .Values.acme.skipTLSVerify }}
+    skipTLSVerify: true
+    {{- else }}
+    skipTLSVerify: false
+    {{- end }}
+    {{- if .Values.acme.disableAccountKeyGeneration }}
+    disableAccountKeyGeneration: true
+    {{- else }}
+    disableAccountKeyGeneration: false
+    {{- end }}
+    {{- if .Values.acme.enableDurationFeature }}
+    enableDurationFeature: true
+    {{- else }}
+    enableDurationFeature: false
+    {{- end }}
     solvers:
     {{- if .Values.acme.solvers }}
     {{- range .Values.acme.solvers }}
@@ -42,6 +57,37 @@ spec:
     {{- end }}
     {{- else }}
     []
+    {{- end }}
+{{- end }}
+
+{{- if .Values.ca.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "issuer.fullname" . }}-ca
+  annotations:
+    {{- range $key, $value := .Values.global.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $value := .Values.global.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  ca:
+    secretName: {{ .Values.ca.secretName | quote }}
+    {{- if .Values.ca.crlDistributionPoints }}
+    crlDistributionPoints:
+      {{- toYaml .Values.ca.crlDistributionPoints | nindent 6 }}
+    {{- end }}
+    {{- if .Values.ca.issuingCertificateURLs }}
+    issuingCertificateURLs:
+      {{- toYaml .Values.ca.issuingCertificateURLs | nindent 6 }}
+    {{- end }}
+    {{- if .Values.ca.ocspServers }}
+    ocspServers:
+      {{- toYaml .Values.ca.ocspServers | nindent 6 }}
     {{- end }}
 {{- end }}
 
