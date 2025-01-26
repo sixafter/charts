@@ -2,7 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ .Values.acme.name }}
+  name: {{ include "issuer.fullname" . }}  
   namespace: {{ .Values.certManagerNamespace | default "cert-manager" }}
   annotations:
     {{- range $key, $value := .Values.global.annotations }}
@@ -62,7 +62,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ .Values.selfSigned.name }}
+  name: {{ include "issuer.fullname" . }}-self-signed
 spec:
   selfSigned: {}
 {{- end }}

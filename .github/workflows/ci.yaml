@@ -14,7 +14,13 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        # The following strategy matrix is for Minikube.
+        # Ref: https://kubernetes.io/releases/
+        k8s: [ "1.32.1" ]
 
     permissions:
       contents: read  # Required to read repo contents
@@ -56,5 +62,38 @@ jobs:
       - name: Install chart-testing
         uses: helm/chart-testing-action@v2.7.0
 
+      # Ref: https://github.com/helm/chart-testing-action
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config ct.yaml)
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
+
       - name: Run chart-testing (lint)
         run: ct lint --config ct.yaml
+
+      # Ref: https://github.com/manusa/actions-setup-minikube
+      - name: Install Minikube
+        if: steps.list-changed.outputs.changed == 'true'
+        uses: manusa/actions-setup-minikube@v2.13.1
+        with:
+          driver: docker
+          container runtime: docker
+          minikube version: 'v1.35.0'
+          kubernetes version: ${{ matrix.k8s }}
+          start args: "--addons registry --memory 2048 --cpus 2"
+          github token: ${{ secrets.GHCR_TOKEN }}
+
+      # Ref: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+      - name: Install cert-manager
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true
+
+      # Ref: https://github.com/helm/chart-testing/blob/main/doc/ct_install.md
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --config ct.yaml --debug
+  

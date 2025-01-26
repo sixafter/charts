@@ -1,0 +1,5 @@
+# Self-Signed Issuer Configuration
+selfSigned:
+  # Enable or disable the creation of a self-signed ClusterIssuer.
+  # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
+  enabled: true
