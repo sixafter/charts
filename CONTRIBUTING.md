@@ -44,7 +44,7 @@ There are several ways you can contribute to this project, including reporting b
 
 If you encounter a bug or unexpected behavior:
 
-1. **Search Existing Issues**: Check if the issue has already been reported [here](https://github.com/sixafter/nanoid/issues).
+1. **Search Existing Issues**: Check if the issue has already been reported [here](https://github.com/sixafter/charts/issues).
 2. **Open a New Issue**: If not, open a new issue describing the bug in detail.
     - **Provide a Clear Title**: Summarize the problem.
     - **Describe the Behavior**: Explain what you expected to happen versus what actually happened.
@@ -233,7 +233,7 @@ Follow these steps to create a successful pull request (PR):
 ## 📝 Additional Resources
 
 * [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow) 
-* [Contributor Covenant Code of Conduct](https://github.com/sixafter/nanoid/blob/main/CODE_OF_CONDUCT.md)
+* [Contributor Covenant Code of Conduct](https://github.com/sixafter/charts/blob/main/CODE_OF_CONDUCT.md)
 
 ## 🙏 Thank You!
 
