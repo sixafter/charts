@@ -30,6 +30,8 @@ jobs:
           echo event name $GITHUB_EVENT_NAME
           echo workspace $GITHUB_WORKSPACE
 
+          sudo apt update && sudo apt install -y yq
+          
           df -h
 
       # Ref: https://github.com/actions/checkout
@@ -57,28 +59,35 @@ jobs:
       - name: Install chart-testing
         uses: helm/chart-testing-action@v2.7.0
 
-      - name: Run chart-testing (lint)
-        run: ct lint --config ct.yaml
-
       # Detect changed charts.
-      - name: Detect Changed Charts
-        id: changed-charts
+      # Ref: https://github.com/helm/chart-testing-action
+      - name: Run chart-testing (list-changed)
+        id: list-changed
         run: |
-          CHANGED=$(git diff --name-only HEAD~1 | grep 'charts/.*/Chart.yaml' | cut -d'/' -f2)
-          echo "CHARTS=${CHANGED}" >> $GITHUB_ENV
+          changed=$(ct list-changed --config ct.yaml)
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "charts=$changed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --config ct.yaml
 
       # Publish Changed Charts.
       - name: Publish Charts
-        if: env.CHARTS != ''
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
-          for chart in $CHARTS; do
+          for chart in ${{ steps.list-changed.outputs.charts }}; do
             echo "Processing chart: $chart"
 
-            # Package the chart
-            helm package charts/$chart
-
-            # Push the chart to GHCR
+            # Extract chart version from Chart.yaml
             VERSION=$(yq e '.version' charts/$chart/Chart.yaml)
-            helm chart save charts/$chart ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
+
+            # Package the chart
+            helm package charts/$chart --destination ./charts-packaged
+
+            # Save and push the chart to GHCR
+            helm chart save ./charts-packaged/$chart-$VERSION.tgz ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
             helm chart push ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
           done
