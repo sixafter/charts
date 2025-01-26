@@ -7,7 +7,7 @@ The `cert-issuer` Helm chart is designed to simplify the management of certifica
 ## Features
 
 - **Automated Certificate Issuance**: Leverages cert-manager to handle certificate management.
-- **Multi-Cloud Support**: Supports DNS challenges for AWS Route 53, Google Cloud DNS, Azure DNS, and Cloudflare.
+- **Multi-Cloud Support**: Supports DNS challenges for AWS Route 53, Google Cloud DNS, Azure DNS, Vault, and Cloudflare and HTTP challenges.
 - **Self-Signed Certificates**: Allows optional configuration for self-signed issuers.
 - **Secure and Flexible**: Parameterized configurations for secrets, namespaces, and annotations.
 
@@ -18,17 +18,14 @@ The `cert-issuer` Helm chart is designed to simplify the management of certifica
 ### Prerequisites
 
 - Kubernetes 1.10+.
-- cert-manager installed in the cluster.
+- [cert-manager](https://artifacthub.io/packages/helm/cert-manager/cert-manager) installed in the cluster.
 - Helm 3.8+ (supports OCI-compliant charts).
 
 ### Pull and Install the Chart
 
 OCI-compliant charts are stored in container registries like the GitHub Container Registry. To use them, you must first enable OCI support in Helm and authenticate (if necessary).
 
-#### Enable OCI Support
-```bash
-export HELM_EXPERIMENTAL_OCI=1
-```
+See the [Helm documentation](https://helm.sh/docs/topics/registries/) for details on enabling OCI support.
 
 #### Pull the Chart
 Replace `sixafter` and `<VERSION>` with the appropriate values:
@@ -63,7 +60,7 @@ The chart is highly configurable via the `values.yaml` file. Below are some key 
 | `acme.email`              | Email for Let's Encrypt notifications                | `user@example.com`                     |
 | `acme.server`             | ACME server URL                                      | `https://acme-v02.api.letsencrypt.org/directory` |
 | `acme.privateKeySecretRef`| Secret name to store the ACME private key            | `letsencrypt-private-key`              |
-| `acme.solvers`            | Configuration for DNS challenges                     | See `values.yaml`                      |
+| `acme.solvers`            | Configuration for DNS and HTTP challenges                     | See `values.yaml`                      |
 
 ### Self-Signed Configuration
 
@@ -91,3 +88,8 @@ helm template cert-issuer ./cert-issuer --values values.yaml
 
 Contributions are welcome! Please see [CONTRIBUTING.md](../../CONTRIBUTING.md) for details on how to get involved.
 
+---
+
+## License
+
+This project is licensed under the [Apache 2.0 License](https://choosealicense.com/licenses/apache-2.0/). See [LICENSE](../../LICENSE) file.
