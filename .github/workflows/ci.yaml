@@ -27,20 +27,6 @@ jobs:
       packages: write # Required to push to GHCR
 
     steps:
-      - name: Display GitHub Context
-        id: github_context_step
-        run: echo '${{ toJSON(github) }}'
-      - name: Display Job Context
-        run: echo '${{ toJSON(job) }}'
-      - name: Display Steps Context
-        run: echo '${{ toJSON(steps) }}'
-      - name: Display Runner Context
-        run: echo '${{ toJSON(runner) }}'
-      - name: Display Strategy Context
-        run: echo '${{ toJSON(strategy) }}'
-      - name: Display Matrix Context
-        run: echo '${{ toJSON(matrix) }}'
-
       - name: Preamble
         run: |
           whoami
