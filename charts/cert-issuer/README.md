@@ -71,57 +71,6 @@ The chart is highly configurable via the `values.yaml` file. Below are some key 
 |-----------------------|--------------------------------------------------|---------------------|
 | `selfSigned.enabled`  | Enable self-signed ClusterIssuer                 | `false`             |
 
-### Example `values.yaml`
-
-```yaml
-# ACME Issuer Configuration
-acme:
-  # Enable or disable the creation of an ACME ClusterIssuer.
-  # Set to true to create the ACME ClusterIssuer, or false to exclude it.
-  enabled: true
-
-  # The email address to use for the ACME account registration.
-  # Required by Let's Encrypt for notifications about certificate expiration or updates.
-  email: "user@example.com"
-
-  # The ACME server URL.
-  # Use the production endpoint for real certificates:
-  #   https://acme-v02.api.letsencrypt.org/directory
-  # Use the staging endpoint for testing (does not issue trusted certificates):
-  #   https://acme-staging-v02.api.letsencrypt.org/directory
-  server: "https://acme-staging-v02.api.letsencrypt.org/directory"
-
-  # The name of the Kubernetes Secret where the ACME private key will be stored.
-  privateKeySecretRef: "acme-private-key"
-
-  # Private Key Management for the ACME Account
-  privateKey:
-    # Set to true to allow the Helm chart to create a Kubernetes Secret for the ACME private key.
-    # If set to false, the Secret will either be automatically created and managed by cert-manager,
-    # or an existing Secret must be provided in advance.
-    create: false
-
-  solvers:
-    # Example configuration for DNS and other solver types.
-    - selector:
-        dnsZones:
-          # List of DNS zones that this solver will handle.
-          - "example.com"
-      dns:
-        dns01:
-          route53:
-            # AWS region where the Route 53 hosted zone is located.
-            region: "us-east-1"
-            # (Optional) Hosted Zone ID for the domain.
-            hostedZoneID: "Z1234567890ABC"
-
-# Self-Signed Issuer Configuration
-selfSigned:
-  # Enable or disable the creation of a self-signed ClusterIssuer.
-  # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
-  enabled: true
-```
-
 ---
 
 ## Testing the Chart

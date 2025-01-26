@@ -18,31 +18,30 @@ spec:
     privateKeySecretRef:
       name: {{ .Values.acme.privateKeySecretRef | quote }}
     solvers:
+    {{- if .Values.acme.solvers }}
     {{- range .Values.acme.solvers }}
     - selector:
         {{- if .selector.dnsZones }}
         dnsZones:
           {{- toYaml .selector.dnsZones | nindent 10 }}
+        {{- else }}
+        {}
         {{- end }}
-      {{- if .dns }}
-      dns:
-        {{- range $solverType, $solverConfig := .dns }}
-        {{ $solverType }}:
-          {{- toYaml $solverConfig | nindent 10 }}
+      {{- if .dns01 }}
+      dns01:
+        {{- range $dnsSolver := .dns01 }}
+        {{- toYaml $dnsSolver | nindent 8 }}
         {{- end }}
       {{- end }}
       {{- if .http01 }}
       http01:
-        {{- toYaml .http01 | nindent 8 }}
+        {{- range $httpSolver := .http01 }}
+        {{- toYaml $httpSolver | nindent 8 }}
+        {{- end }}
       {{- end }}
-      {{- if .ca }}
-      ca:
-        {{- toYaml .ca | nindent 8 }}
-      {{- end }}
-      {{- if .vault }}
-      vault:
-        {{- toYaml .vault | nindent 8 }}
-      {{- end }}
+    {{- end }}
+    {{- else }}
+    []
     {{- end }}
 {{- end }}
 
@@ -54,4 +53,28 @@ metadata:
   name: {{ include "issuer.fullname" . }}-self-signed
 spec:
   selfSigned: {}
+{{- end }}
+
+{{- if .Values.vault.enabled }}
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "issuer.fullname" . }}-vault
+  annotations:
+    {{- range $key, $value := .Values.global.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  labels:
+    {{- range $key, $value := .Values.global.labels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  vault:
+    server: {{ .Values.vault.server | quote }}
+    path: {{ .Values.vault.path | quote }}
+    auth:
+      tokenSecretRef:
+        name: {{ .Values.vault.auth.tokenSecretRef.name | quote }}
+        key: {{ .Values.vault.auth.tokenSecretRef.key | quote }}
 {{- end }}

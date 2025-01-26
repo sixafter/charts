@@ -18,29 +18,21 @@ acme:
   # The name of the Kubernetes Secret where the ACME private key will be stored.
   privateKeySecretRef: "acme-private-key"
 
-  # Private Key Management for the ACME Account
-  privateKey:
-    # Set to true to allow the Helm chart to create a Kubernetes Secret for the ACME private key.
-    # If set to false, the Secret will either be automatically created and managed by cert-manager,
-    # or an existing Secret must be provided in advance.
-    create: false
-
+  # Solvers for ACME challenges supporting dns01 and http01 with multiple configurations.
   solvers:
-    # Example configuration for DNS and other solver types.
+    # Define solvers for ACME challenges. Multiple solvers can be defined to handle different DNS zones or methods.
     - selector:
         dnsZones:
           # List of DNS zones that this solver will handle.
           - "example.com"
-      dns:
-        dns01:
-          route53:
-            # AWS region where the Route 53 hosted zone is located.
+      dns01:
+        - route53:
             region: "us-east-1"
-            # (Optional) Hosted Zone ID for the domain.
             hostedZoneID: "Z1234567890ABC"
 
 # Self-Signed Issuer Configuration
 selfSigned:
   # Enable or disable the creation of a self-signed ClusterIssuer.
+  # Self-signed issuers are typically used for testing or internal purposes where external validation is not required.
   # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
   enabled: true

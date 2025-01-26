@@ -1,14 +1,18 @@
 # Global configuration for the ClusterIssuer Helm chart
+# Ref: https://doc.crds.dev/github.com/jetstack/cert-manager/cert-manager.io/ClusterIssuer/v1
 
 # Additional global values for advanced use cases can be added below.
 # For example, annotations, labels, or custom configurations.
 global:
   annotations: {}
+  # Provide additional annotations that can be applied to resources created by this chart.
   labels: {}
+  # Provide additional labels that can be applied to resources created by this chart.
 
 # Namespace where cert-manager is installed
 # This should match the namespace in which cert-manager is deployed.
 certManagerNamespace: "cert-manager"
+# This namespace must match where cert-manager is installed. Change this value if cert-manager is deployed in a custom namespace.
 
 # ACME Issuer Configuration
 acme:
@@ -46,93 +50,50 @@ acme:
     # Finally, paste the result here.
     data: ""
 
-  # Solvers for ACME challenges, supporting multiple types dynamically.
+  # Solvers for ACME challenges supporting dns01 and http01 with multiple configurations.
   solvers:
-    # Example configuration for DNS and other solver types.
+    # Define solvers for ACME challenges. Multiple solvers can be defined to handle different DNS zones or methods.
     - selector:
         dnsZones:
           # List of DNS zones that this solver will handle.
           - "example.com"
-      dns:
-        dns01:
-          route53:
-            # AWS region where the Route 53 hosted zone is located.
+          - "sub.example.com"
+      dns01:
+        - route53:
             region: "us-east-1"
-            # (Optional) Hosted Zone ID for the domain.
             hostedZoneID: "Z1234567890ABC"
-    - selector:
-        dnsZones:
-          # List of DNS zones that this solver will handle.
-          - "subzone.example.com"
-      dns:
-        dns01:
-          cloudflare:
-            # Reference to the Kubernetes Secret containing the Cloudflare API token.
+        - cloudflare:
             apiTokenSecretRef:
-              # Name of the Secret.
-              name: cloudflare-api-token
-              # Key in the Secret that stores the token.
-              key: api-token
+              name: "cloudflare-token"
+              key: "token"
     - selector:
-        dnsZones:
-          # List of DNS zones that this solver will handle.
-          - "example.com"
-      dns:
-        dns01:
-          azureDNS:
-            # Azure service principal configuration.
-            clientID: "azure-client-id"
-            clientSecretSecretRef:
-              # Name of the Secret containing the client secret.
-              name: azure-client-secret
-              # Key in the Secret for the client secret.
-              key: client-secret
-            tenantID: "azure-tenant-id"
-            subscriptionID: "azure-subscription-id"
-            # Name of the Azure hosted zone.
-            hostedZoneName: "example.com"
-    - selector:
-        dnsZones:
-          # List of DNS zones that this solver will handle.
-          - "example.com"
-      dns:
-        dns01:
-          googleDNS:
-            # GCP project ID where the Cloud DNS hosted zone is located.
-            project: "gcp-project-id"
-            # Reference to the Kubernetes Secret containing the GCP service account key.
-            serviceAccountSecretRef:
-              # Name of the Secret.
-              name: gcp-service-account
-              # Key in the Secret that stores the service account JSON.
-              key: gcp-service-account.json
-    - selector:
-        # Example for handling HTTP challenges.
         dnsZones:
           - "example.org"
+          - "another.example.org"
       http01:
-        ingress:
-          class: "nginx"
-    - selector:
-        # Example for CA-based issuance.
-        dnsZones:
-          - "example.net"
-      ca:
-        secretName: "my-ca-secret"
-    - selector:
-        # Example for Vault-based issuance.
-        dnsZones:
-          - "example.edu"
-      vault:
-        server: "https://vault.example.com"
-        path: "pki/issue/example-dot-com"
-        auth:
-          tokenSecretRef:
-            name: "vault-token"
-            key: "token"
+        - ingress:
+            class: "nginx"
+        - ingress:
+            class: "traefik"
+
+# Vault Issuer Configuration
+vault:
+  # Enable or disable the creation of a Vault ClusterIssuer.
+  # Vault issuers are useful for integrating with internal PKI systems managed through Vault.
+  # Set to true to create the Vault ClusterIssuer, or false to exclude it.
+  enabled: false
+
+  # Vault server configuration.
+  server: "https://vault.example.com"
+  path: "pki/issue/example-dot-com"
+  auth:
+    tokenSecretRef:
+      name: "vault-token"
+      key: "token"
 
 # Self-Signed Issuer Configuration
 selfSigned:
   # Enable or disable the creation of a self-signed ClusterIssuer.
+  # Self-signed issuers are typically used for testing or internal purposes where external validation is not required.
   # Set to true to create the self-signed ClusterIssuer, or false to exclude it.
-  enabled: true
+  enabled: false
