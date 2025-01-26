@@ -17,7 +17,7 @@ Date format: `YYYY-MM-DD`
 ### Security
 
 ---
-## [0.1.0] - 2025-01-26
+## [1.1.0] - 2025-01-26
 
 ### Added
 - `feature`: Added support for the [cert-issuer](charts/cert-issuer/) Helm chart.
@@ -28,8 +28,21 @@ Date format: `YYYY-MM-DD`
 ### Fixed
 ### Security
 
-[Unreleased]: https://github.com/scriptures-social/platform/compare/0.1.0...HEAD
-[0.1.0]: https://github.com/scriptures-social/platform/compare/0.0.0...0.1.0
+---
+## [1.0.0] - 2025-01-25
+
+### Added
+- `feature`: Initial commit.
+
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+[Unreleased]: https://github.com/scriptures-social/platform/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/scriptures-social/platform/compare/1.0.0...1.0.0
+[1.0.0]: https://github.com/scriptures-social/platform/compare/8090a69f7c51a7703b9b49b7633749c8b3b1f391...1.0.0
 
 [MUST]: https://datatracker.ietf.org/doc/html/rfc2119
 [MUST NOT]: https://datatracker.ietf.org/doc/html/rfc2119
