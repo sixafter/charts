@@ -18,6 +18,13 @@ acme:
   # The name of the Kubernetes Secret where the ACME private key will be stored.
   privateKeySecretRef: "acme-private-key"
 
+  # Private Key Management for the ACME Account
+  privateKey:
+    # Set to true to allow the Helm chart to create a Kubernetes Secret for the ACME private key.
+    # If set to false, the Secret will either be automatically created and managed by cert-manager,
+    # or an existing Secret must be provided in advance.
+    create: false
+
   # DNS solvers to configure ACME challenges.
   solvers:
     # Example configuration for AWS Route 53 DNS solver.

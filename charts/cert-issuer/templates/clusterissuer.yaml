@@ -2,8 +2,7 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ include "issuer.fullname" . }}  
-  namespace: {{ .Values.certManagerNamespace | default "cert-manager" }}
+  name: {{ include "issuer.fullname" . }}
   annotations:
     {{- range $key, $value := .Values.global.annotations }}
     {{ $key }}: {{ $value | quote }}
@@ -11,14 +10,15 @@ metadata:
   labels:
     {{- range $key, $value := .Values.global.labels }}
     {{ $key }}: {{ $value | quote }}
-    {{- end }}  
+    {{- end }}
 spec:
   acme:
-    email: {{ .Values.acme.email }}
-    server: {{ .Values.acme.server }}
+    email: {{ .Values.acme.email | quote }}
+    server: {{ .Values.acme.server | quote }}
     privateKeySecretRef:
-      name: {{ .Values.acme.privateKeySecretRef }}
+      name: {{ .Values.acme.privateKeySecretRef | quote }}
     solvers:
+    {{- if .Values.acme.solvers }}
     {{- range .Values.acme.solvers }}
     - selector:
         {{- if .dnsZones }}
@@ -26,34 +26,38 @@ spec:
         {{ toYaml .dnsZones | nindent 8 }}
         {{- end }}
       dns01:
-        {{- if .route53 }}
+        {{- with .route53 }}
         route53:
-          region: {{ .route53.region }}
-          hostedZoneID: {{ .route53.hostedZoneID }}
+          region: {{ .region | quote }}
+          hostedZoneID: {{ .hostedZoneID | quote }}
         {{- end }}
-        {{- if .cloudflare }}
+        {{- with .cloudflare }}
         cloudflare:
           apiTokenSecretRef:
-            name: {{ .cloudflare.apiTokenSecretRef.name }}
-            key: {{ .cloudflare.apiTokenSecretRef.key }}
+            name: {{ .apiTokenSecretRef.name | quote }}
+            key: {{ .apiTokenSecretRef.key | quote }}
         {{- end }}
-        {{- if .azure }}
+        {{- with .azure }}
         azureDNS:
-          clientID: {{ .azure.clientID }}
+          clientID: {{ .clientID | quote }}
           clientSecretSecretRef:
-            name: {{ .azure.clientSecretSecretRef.name }}
-            key: {{ .azure.clientSecretSecretRef.key }}
-          tenantID: {{ .azure.tenantID }}
-          subscriptionID: {{ .azure.subscriptionID }}
-          hostedZoneName: {{ .azure.hostedZoneName }}
+            name: {{ .clientSecretSecretRef.name | quote }}
+            key: {{ .clientSecretSecretRef.key | quote }}
+          tenantID: {{ .tenantID | quote }}
+          subscriptionID: {{ .subscriptionID | quote }}
+          hostedZoneName: {{ .hostedZoneName | quote }}
         {{- end }}
-        {{- if .gcp }}
+        {{- with .gcp }}
         googleDNS:
-          project: {{ .gcp.project }}
+          project: {{ .project | quote }}
           serviceAccountSecretRef:
-            name: {{ .gcp.serviceAccountSecretRef.name }}
-            key: {{ .gcp.serviceAccountSecretRef.key }}
+            name: {{ .serviceAccountSecretRef.name | quote }}
+            key: {{ .serviceAccountSecretRef.key | quote }}
         {{- end }}
+    {{- end }}
+    {{- else }}
+    - selector: {}
+      dns01: {}
     {{- end }}
 {{- end }}
 
