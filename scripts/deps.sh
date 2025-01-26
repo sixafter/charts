@@ -22,5 +22,5 @@ fi
 
 # Chart Testing: https://github.com/helm/chart-testing
 brew update
-brew install chart-testing
+brew install chart-testing kube-score helm
 brew upgrade
