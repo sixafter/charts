@@ -76,7 +76,7 @@ jobs:
 
       # Publish Changed Charts.
       - name: Publish Charts
-        if: steps.list-changed.outputs.changed == 'true'
+        #if: steps.list-changed.outputs.changed == 'true'
         run: |
           for chart in ${{ steps.list-changed.outputs.charts }}; do
             echo "Processing chart: $chart"
@@ -87,7 +87,6 @@ jobs:
             # Package the chart
             helm package charts/$chart --destination ./charts-packaged
 
-            # Save and push the chart to GHCR
-            helm chart save ./charts-packaged/$chart-$VERSION.tgz ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
-            helm chart push ghcr.io/${{ github.repository_owner }}/$chart:$VERSION
+            # Push the chart
+            helm push ./charts-packaged/$chart-$VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/$chart
           done

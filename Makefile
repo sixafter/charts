@@ -3,6 +3,9 @@
 # This source code is licensed under the Apache 2.0 License found in the
 # LICENSE file in the root directory of this source tree.
 
+# -------------------------------------
+# Configuration
+# -------------------------------------
 SHELL := /bin/bash
 
 .DEFAULT: ;: do nothing
@@ -17,6 +20,10 @@ deps: ## Get the dependencies and vendor
 .PHONY: lint
 lint: ## Lint the files
 	@scripts/lint.sh
+
+.PHONY: login
+login: ## Login to the Helm registry (ghcr.io)
+	@scripts/login.sh
 
 .PHONE: score
 score: ## Score the files
