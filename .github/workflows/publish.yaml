@@ -68,7 +68,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --config ct.yaml --since "$LAST_COMMIT")
+          changed=$(ct list-changed --config ct.yaml --since "$LAST_COMMIT" | sed 's|charts/||g')
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "charts=$changed" >> "$GITHUB_OUTPUT"
@@ -86,10 +86,10 @@ jobs:
             echo "Processing chart: $chart"
 
             # Extract chart version from Chart.yaml
-            VERSION=$(yq e '.version' $chart/Chart.yaml)
+            VERSION=$(yq e '.version' charts/$chart/Chart.yaml)
 
             # Package the chart
-            helm package $chart --destination ./charts-packaged
+            helm package charts/$chart --destination ./charts-packaged
 
             # Push the chart
             helm push ./charts-packaged/$chart-$VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/
