@@ -56,7 +56,7 @@ jobs:
 
       # Authenticate to GHCR
       - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GHCR_TOKEN }}" | helm registry login ghcr.io --username ${{ secrets.secrets.GHCR_USER }} --password-stdin
 
       # Ref: https://github.com/helm/chart-testing-action
       - name: Install chart-testing
@@ -99,3 +99,6 @@ jobs:
             # Push the chart
             helm push ./charts-packaged/$chart-$VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          GITHUB_USER: ${{ secrets.GHCR_USER }}

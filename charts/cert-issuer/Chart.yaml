@@ -37,7 +37,7 @@ type: application
 # - Major version for breaking changes.
 # - Minor version for new features, backward-compatible.
 # - Patch version for bug fixes.
-version: 1.2.5
+version: 1.2.6
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are expected to strictly
