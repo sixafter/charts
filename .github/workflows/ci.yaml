@@ -20,7 +20,7 @@ jobs:
       matrix:
         # The following strategy matrix is for Minikube.
         # Ref: https://kubernetes.io/releases/
-        k8s: [ "1.32.1" ]
+        k8s: [ "1.32.2" ]
 
     permissions:
       contents: read  # Required to read repo contents

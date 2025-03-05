@@ -1,3 +1,6 @@
+# Copyright Six After, Inc. All Rights Reserved.
+# SPDX-License-Identifier: APACHE-2.0
+
 apiVersion: v2
 
 # Description of the chart, outlining its purpose and functionality.
@@ -8,13 +11,25 @@ description: >
   issuer configurations. Ideal for securing Kubernetes services across
   diverse environments including AWS, GCP, Azure, and on-premises clusters.
 
-# Minimum Kubernetes version required to deploy this chart.
+# The optional kubeVersion field can define semver constraints on supported Kubernetes versions.
+# Helm will validate the version constraints when installing the chart and fail if the cluster
+# runs an unsupported Kubernetes version.
 # The caret (^) allows compatibility with all patch versions of the specified minor version (1.30.x).
-kubeVersion: ^1.30.0-0
+kubeVersion: ^1.27.0-0
 
 # The name of the Helm chart.
 # This should be a unique identifier for your chart.
 name: cert-issuer
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
 
 # The version of the chart itself.
 # Follows Semantic Versioning (SemVer 2) guidelines: major.minor.patch
@@ -22,11 +37,13 @@ name: cert-issuer
 # - Major version for breaking changes.
 # - Minor version for new features, backward-compatible.
 # - Patch version for bug fixes.
-version: 1.1.0
+version: 1.2.0
 
-# The application version that this chart deploys.
-# This is independent of the chart version and represents the version of the application managed by the chart.
-appVersion: 1.16.0
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are expected to strictly
+# follow Semantic Versioning. They should reflect the version the application is using.
+# NOTE: This value reflects the latest supported major version of the chart manager application.
+appVersion: 1.17.1
 
 # List of maintainers for the chart, providing their name and optional URL.
 maintainers:
