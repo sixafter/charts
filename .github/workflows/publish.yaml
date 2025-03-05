@@ -29,10 +29,15 @@ jobs:
           echo home $HOME
           echo event name $GITHUB_EVENT_NAME
           echo workspace $GITHUB_WORKSPACE
-
-          sudo apt update && sudo apt install -y yq
           
           df -h
+
+      - name: Install yq (mikefarah version)
+        run: |
+          sudo apt remove -y yq || true
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+          yq --version  # Verify installation
 
       # Ref: https://github.com/actions/checkout
       - name: Checkout Source
