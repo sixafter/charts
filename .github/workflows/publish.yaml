@@ -57,12 +57,18 @@ jobs:
       - name: Install chart-testing
         uses: helm/chart-testing-action@v2.7.0
 
+      - name: Last Commit Before Merge
+        id: last-commit
+        run: |
+          LAST_COMMIT=$(git rev-parse HEAD^)
+          echo "LAST_COMMIT=$LAST_COMMIT" >> $GITHUB_ENV
+
       # Detect changed charts.
       # Ref: https://github.com/helm/chart-testing-action
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --config ct.yaml)
+          changed=$(ct list-changed --config ct.yaml --since "$LAST_COMMIT")
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "charts=$changed" >> "$GITHUB_OUTPUT"
