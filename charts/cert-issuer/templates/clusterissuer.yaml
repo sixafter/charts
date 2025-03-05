@@ -1,3 +1,8 @@
+{{-/*
+Copyright Six After, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
 {{- if .Values.acme.enabled }}
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer

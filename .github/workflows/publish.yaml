@@ -48,8 +48,6 @@ jobs:
       # Ref: https://github.com/Azure/setup-helm
       - name: Install Helm
         uses: azure/setup-helm@v4
-        with:
-          version: v3.16.2
 
       # Authenticate to GHCR
       - name: Login to GitHub Container Registry

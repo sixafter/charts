@@ -1,3 +1,8 @@
+{{-/*
+Copyright Six After, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
 {{/*
 Expand the name of the chart.
 */}}
