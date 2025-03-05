@@ -86,7 +86,7 @@ jobs:
             echo "Processing chart: $chart"
 
             # Extract chart version from Chart.yaml
-            VERSION=$(yq e '.version' charts/$chart/Chart.yaml)
+            VERSION=$(yq eval '.version' charts/$chart/Chart.yaml)
 
             # Package the chart
             helm package charts/$chart --destination ./charts-packaged
