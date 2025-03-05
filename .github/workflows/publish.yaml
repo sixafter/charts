@@ -81,8 +81,19 @@ jobs:
           changed=$(ct list-changed --config ct.yaml --since "$LAST_COMMIT" | sed 's|charts/||g')
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            echo "charts=$changed" >> "$GITHUB_OUTPUT"
+            {
+              echo 'charts<<EOF'
+              echo "$changed"
+              echo 'EOF'
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Debug changed charts
+        run: |
+          echo "Changed charts:"
+          echo "${{ steps.list-changed.outputs.charts }}"
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
@@ -90,9 +101,9 @@ jobs:
 
       # Publish Changed Charts.
       - name: Publish Charts
-        #if: steps.list-changed.outputs.changed == 'true'
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
-          for chart in ${{ steps.list-changed.outputs.charts }}; do
+          while IFS= read -r chart; do
             echo "Processing chart: $chart"
 
             # Extract chart version from Chart.yaml
@@ -103,7 +114,7 @@ jobs:
 
             # Push the chart
             helm push ./charts-packaged/$chart-$VERSION.tgz oci://ghcr.io/${{ github.repository_owner }}/charts/
-          done
+          done <<< "${{ steps.list-changed.outputs.charts }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
           GITHUB_USER: ${{ secrets.GHCR_USER }}
