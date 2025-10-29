@@ -17,6 +17,19 @@ Date format: `YYYY-MM-DD`
 ### Security
 
 ---
+## [1.3.1] - 2025-10-29
+
+### Added
+### Changed
+- `risk`: Workaround to bypass Azure Front Door (CDN) being down.
+
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+
+---
 ## [1.3.0] - 2025-10-29
 
 ### Added
@@ -64,7 +77,8 @@ Date format: `YYYY-MM-DD`
 ### Fixed
 ### Security
 
-[Unreleased]: https://github.com/scriptures-social/platform/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/scriptures-social/platform/compare/1.3.1...HEAD
+[1.3.1]: https://github.com/scriptures-social/platform/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/scriptures-social/platform/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/scriptures-social/platform/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/scriptures-social/platform/compare/1.0.0...1.1.0
