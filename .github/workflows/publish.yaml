@@ -57,10 +57,10 @@ jobs:
 
       # Ref: https://github.com/Azure/setup-helm
       # https://helm.sh/docs/intro/install#from-apt-debianubuntu
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-        with:
-            version: 'v3.19.0'
+      # - name: Install Helm
+      #   uses: azure/setup-helm@v4
+      #   with:
+      #       version: 'v3.19.0'
         # run: | 
         #   sudo apt-get install curl gpg apt-transport-https --yes
         #   curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -73,6 +73,8 @@ jobs:
         id: setup-helm
         continue-on-error: true
         uses: azure/setup-helm@v4
+        with:
+            version: 'v3.19.0'
 
       - name: Set up Homebrew
         id: setup-homebrew
