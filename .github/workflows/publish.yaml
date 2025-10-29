@@ -56,37 +56,25 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"          
 
       # Ref: https://github.com/Azure/setup-helm
-      # https://helm.sh/docs/intro/install#from-apt-debianubuntu
-      # - name: Install Helm
+      # RefL https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md?plain=1#L31
+      # - name: Setup Helm
+      #   id: setup-helm
+      #   continue-on-error: true
       #   uses: azure/setup-helm@v4
       #   with:
       #       version: 'v3.19.0'
-        # run: | 
-        #   sudo apt-get install curl gpg apt-transport-https --yes
-        #   curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-        #   echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-        #   sudo apt-get update
-        #   sudo apt-get install helm
 
-      # Ref: https://github.com/Azure/setup-helm
-      - name: Setup Helm
-        id: setup-helm
-        continue-on-error: true
-        uses: azure/setup-helm@v4
-        with:
-            version: 'v3.19.0'
+      # - name: Set up Homebrew
+      #   id: setup-homebrew
+      #   if: ${{ steps.setup-helm.outcome == 'failure' }}
+      #   uses: Homebrew/actions/setup-homebrew@main
 
-      - name: Set up Homebrew
-        id: setup-homebrew
-        if: ${{ steps.setup-helm.outcome == 'failure' }}
-        uses: Homebrew/actions/setup-homebrew@main
-
-      - name: Install Helm
-        id: install-helm
-        if: ${{ steps.setup-helm.outcome == 'failure' }}
-        shell: bash
-        run: |
-          brew install helm
+      # - name: Install Helm
+      #   id: install-helm
+      #   if: ${{ steps.setup-helm.outcome == 'failure' }}
+      #   shell: bash
+      #   run: |
+      #     brew install helm
 
       # Authenticate to GHCR
       - name: Login to GitHub Container Registry
