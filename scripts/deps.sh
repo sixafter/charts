@@ -24,3 +24,4 @@ fi
 brew update
 brew install chart-testing kube-score helm
 brew upgrade
+brew upgrade --cask
